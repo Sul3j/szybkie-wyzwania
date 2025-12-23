@@ -1,0 +1,91 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: szybkie_wyzwania_db
+      POSTGRES_USER: szybkie_wyzwania_user
+      POSTGRES_PASSWORD: szybkie_wyzwania_pass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U szybkie_wyzwania_user"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn szybkie_wyzwania_project.wsgi:application --bind 0.0.0.0:8000 --workers 3"
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=your-secret-key-change-in-production
+      - DATABASE_URL=postgresql://szybkie_wyzwania_user:szybkie_wyzwania_pass@db:5432/szybkie_wyzwania_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+  
+  celery:
+    build: .
+    command: celery -A szybkie_wyzwania_project worker -l info --concurrency=2
+    volumes:
+      - .:/app
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=your-secret-key-change-in-production
+      - DATABASE_URL=postgresql://szybkie_wyzwania_user:szybkie_wyzwania_pass@db:5432/szybkie_wyzwania_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    
+  celery-beat:
+    build: .
+    command: celery -A szybkie_wyzwania_project beat -l info
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DEBUG=True
+      - SECRET_KEY=your-secret-key-change-in-production
+      - DATABASE_URL=postgresql://szybkie_wyzwania_user:szybkie_wyzwania_pass@db:5432/szybkie_wyzwania_db
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+
+volumes:
+  postgres_data:
+  static_volume:
+  media_volume:
