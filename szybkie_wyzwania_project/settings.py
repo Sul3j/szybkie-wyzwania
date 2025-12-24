@@ -139,3 +139,31 @@ CORS_ALLOWED_ORIGINS = config(
     cast=Csv()
 )
 CORS_ALLOW_CREDENTIALS = True
+
+# Level and Rank System
+LEVEL_THRESHOLDS = {
+    1: 0,
+    2: 100,
+    3: 300,
+    4: 600,
+    5: 1000,
+    6: 1500,
+    7: 2100,
+    8: 2800,
+    9: 3600,
+    10: 4500,
+    11: 5500,
+    12: 6600,
+    13: 7800,
+    14: 9100,
+    15: 10500,
+}
+
+RANKS = {
+    0: "Beginner",
+    1000: "Novice",
+    3000: "Intermediate",
+    6000: "Advanced",
+    10000: "Expert",
+    15000: "Master",
+}
