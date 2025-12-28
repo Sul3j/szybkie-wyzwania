@@ -140,6 +140,45 @@ CORS_ALLOWED_ORIGINS = config(
 )
 CORS_ALLOW_CREDENTIALS = True
 
+# Celery Configuration
+CELERY_BROKER_URL = config('CELERY_BROKER_URL', default='redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = config('CELERY_RESULT_BACKEND', default='redis://localhost:6379/0')
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+
+# Judge System Settings
+JUDGE_TIMEOUT = config('JUDGE_TIMEOUT', default=5, cast=int)  # seconds
+JUDGE_MEMORY_LIMIT = config('JUDGE_MEMORY_LIMIT', default=128, cast=int)  # MB
+MAX_SUBMISSIONS_PER_MINUTE = config('MAX_SUBMISSIONS_PER_MINUTE', default=10, cast=int)
+
+# Code execution languages
+SUPPORTED_LANGUAGES = {
+    'python': {
+        'name': 'Python 3.11',
+        'docker_image': 'szybkie-wyzwania-python-sandbox',
+        'file_extension': '.py',
+    },
+    'javascript': {
+        'name': 'JavaScript (Node.js)',
+        'docker_image': 'szybkie-wyzwania-js-sandbox',
+        'file_extension': '.js',
+    },
+    'csharp': {
+        'name': 'C# (.NET 7)',
+        'docker_image': 'szybkie-wyzwania-csharp-sandbox',
+        'file_extension': '.cs',
+    },
+    'cpp': {
+        'name': 'C++ (g++ 11)',
+        'docker_image': 'szybkie-wyzwania-cpp-sandbox',
+        'file_extension': '.cpp',
+    },
+}
+
 # Level and Rank System
 LEVEL_THRESHOLDS = {
     1: 0,
@@ -167,3 +206,11 @@ RANKS = {
     10000: "Expert",
     15000: "Master",
 }
+
+if not DEBUG:
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
