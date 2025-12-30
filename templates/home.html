@@ -1,0 +1,410 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Szybkie Wyzwania - Platforma Zadań Programistycznych{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/home.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">
+                    Rozwijaj swoje umiejętności <span class="gradient-text">programowania</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Szybkie Wyzwania to platforma zadań programistycznych, która pomoże Ci doskonalić umiejętności poprzez rozwiązywanie praktycznych wyzwań
+                </p>
+                <div class="hero-buttons">
+                    <button class="btn btn-large btn-primary hero-btn-primary" id="getStartedBtn">
+                        <i class="fas fa-rocket"></i> Rozpocznij przygodę
+                    </button>
+                    <button class="btn btn-large btn-outline hero-btn-outline" id="learnMoreBtn">
+                        <i class="fas fa-info-circle"></i> Dowiedz się więcej
+                    </button>
+                </div>
+                <div class="hero-badges">
+                    <div class="hero-badge">
+                        <i class="fas fa-code"></i>
+                        <span class="badge-number" id="totalProblems">0</span>
+                        <span class="badge-label">Zadań</span>
+                    </div>
+                    <div class="hero-badge">
+                        <i class="fas fa-users"></i>
+                        <span class="badge-number" id="totalUsers">0</span>
+                        <span class="badge-label">Użytkowników</span>
+                    </div>
+                    <div class="hero-badge">
+                        <i class="fas fa-layer-group"></i>
+                        <span class="badge-number">3</span>
+                        <span class="badge-label">Języki</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="code-preview">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                        </div>
+                        <span class="code-title">solution.py</span>
+                    </div>
+                    <div class="code-body">
+                        <pre><code><span class="code-keyword">def</span> <span class="code-function">solve</span>(<span class="code-param">n</span>):
+    <span class="code-comment"># Twoja implementacja</span>
+    <span class="code-keyword">if</span> n <= <span class="code-number">1</span>:
+        <span class="code-keyword">return</span> <span class="code-number">1</span>
+    <span class="code-keyword">return</span> solve(n - <span class="code-number">1</span>) + solve(n - <span class="code-number">2</span>)</code></pre>
+                    </div>
+                </div>
+
+                <!-- Testing Animation Panel -->
+                <div class="test-animation-panel">
+                    <div class="test-animation-header">
+                        <i class="fas fa-vial"></i>
+                        <span>Testy automatyczne</span>
+                    </div>
+                    <div class="test-cases-animation">
+                        <div class="test-case-item" data-delay="0">
+                            <div class="test-icon test-pending">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </div>
+                            <span class="test-name">Test 1: solve(0) === 1</span>
+                            <span class="test-status">Oczekuje...</span>
+                        </div>
+                        <div class="test-case-item" data-delay="1">
+                            <div class="test-icon test-pending">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </div>
+                            <span class="test-name">Test 2: solve(5) === 8</span>
+                            <span class="test-status">Oczekuje...</span>
+                        </div>
+                        <div class="test-case-item" data-delay="2">
+                            <div class="test-icon test-pending">
+                                <i class="fas fa-circle-notch fa-spin"></i>
+                            </div>
+                            <span class="test-name">Test 3: solve(10) === 89</span>
+                            <span class="test-status">Oczekuje...</span>
+                        </div>
+                    </div>
+                    <div class="test-summary">
+                        <div class="summary-content">
+                            <i class="fas fa-hourglass-half"></i>
+                            <span>Sprawdzanie...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hero-background">
+        <div class="hero-gradient"></div>
+    </div>
+</section>
+
+<!-- Features Section -->
+<section class="features-section">
+    <div class="container">
+        <div class="section-header-center">
+            <h2 class="section-title">Dlaczego warto wybrać Szybkie Wyzwania?</h2>
+            <p class="section-subtitle">Poznaj funkcje, które wyróżniają naszą platformę</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card-modern">
+                <div class="feature-icon">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h3>Różnorodne zadania</h3>
+                <p>Od prostych algorytmów po zaawansowane problemy. Zadania podzielone na poziomy trudności, dopasowane do Twoich umiejętności.</p>
+            </div>
+            <div class="feature-card-modern">
+                <div class="feature-icon">
+                    <i class="fas fa-code-branch"></i>
+                </div>
+                <h3>Wiele języków</h3>
+                <p>Rozwiązuj zadania w Python, JavaScript, C# i C++. Wybierz język, który najbardziej Cię interesuje lub ćwicz wszystkie naraz.</p>
+            </div>
+            <div class="feature-card-modern">
+                <div class="feature-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3>System punktów</h3>
+                <p>Zdobywaj punkty doświadczenia, awansuj na kolejne poziomy i śledź swoje postępy w czasie rzeczywistym.</p>
+            </div>
+            <div class="feature-card-modern">
+                <div class="feature-icon">
+                    <i class="fas fa-medal"></i>
+                </div>
+                <h3>Rankingi</h3>
+                <p>Rywalizuj z innymi programistami, wspinaj się w rankingach i porównuj swoje wyniki z najlepszymi.</p>
+            </div>
+            <div class="feature-card-modern">
+                <div class="feature-icon">
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <h3>Natychmiastowa ocena</h3>
+                <p>Otrzymuj błyskawiczną informację zwrotną o poprawności rozwiązania wraz z szczegółowymi wynikami testów.</p>
+            </div>
+            <div class="feature-card-modern">
+                <div class="feature-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <h3>Edytor kodu</h3>
+                <p>Korzystaj z zaawansowanego edytora Monaco z podświetlaniem składni i autouzupełnianiem.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- How it works Section -->
+<section class="how-it-works-section">
+    <div class="container">
+        <div class="section-header-center">
+            <h2 class="section-title">Jak to działa?</h2>
+            <p class="section-subtitle">Zacznij swoją przygodę w kilku prostych krokach</p>
+        </div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <h3>Zarejestruj się</h3>
+                    <p>Stwórz darmowe konto w kilka sekund i zacznij naukę od razu</p>
+                </div>
+                <div class="step-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-card">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <h3>Wybierz zadanie</h3>
+                    <p>Przeglądaj katalog zadań i wybierz te, które odpowiadają Twojemu poziomowi</p>
+                </div>
+                <div class="step-icon">
+                    <i class="fas fa-list-check"></i>
+                </div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-card">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <h3>Rozwiązuj i ucz się</h3>
+                    <p>Pisz kod, testuj rozwiązania i zdobywaj cenne doświadczenie</p>
+                </div>
+                <div class="step-icon">
+                    <i class="fas fa-code"></i>
+                </div>
+            </div>
+            <div class="step-connector"></div>
+            <div class="step-card">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <h3>Awansuj</h3>
+                    <p>Zdobywaj punkty, odblokowuj osiągnięcia i wspinaj się w rankingach</p>
+                </div>
+                <div class="step-icon">
+                    <i class="fas fa-trophy"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Ranks Section -->
+<section class="ranks-section">
+    <div class="container">
+        <div class="section-header-center">
+            <h2 class="section-title">System Rang</h2>
+            <p class="section-subtitle">Awansuj przez poziomy i stań się legendą programowania</p>
+        </div>
+
+        <div class="ranks-grid">
+            <!-- Rank 1: Code Rookie -->
+            <div class="rank-card rank-rookie" data-rank="1">
+                <div class="rank-glow"></div>
+                <div class="rank-icon-wrapper">
+                    <i class="fas fa-seedling rank-icon"></i>
+                    <div class="rank-particles">
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                    </div>
+                </div>
+                <h3 class="rank-name">Code Rookie</h3>
+                <p class="rank-description">Rozpoczynasz swoją przygodę z programowaniem</p>
+                <div class="rank-exp">
+                    <i class="fas fa-star"></i>
+                    <span>0 - 100 EXP</span>
+                </div>
+            </div>
+
+            <!-- Rank 2: Bug Hunter -->
+            <div class="rank-card rank-hunter" data-rank="2">
+                <div class="rank-glow"></div>
+                <div class="rank-icon-wrapper">
+                    <i class="fas fa-bug rank-icon"></i>
+                    <div class="rank-particles">
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                    </div>
+                </div>
+                <h3 class="rank-name">Bug Hunter</h3>
+                <p class="rank-description">Łowisz błędy i uczysz się debugowania</p>
+                <div class="rank-exp">
+                    <i class="fas fa-star"></i>
+                    <span>100 - 500 EXP</span>
+                </div>
+            </div>
+
+            <!-- Rank 3: Code Ninja -->
+            <div class="rank-card rank-ninja" data-rank="3">
+                <div class="rank-glow"></div>
+                <div class="rank-icon-wrapper">
+                    <i class="fas fa-user-ninja rank-icon"></i>
+                    <div class="rank-particles">
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                    </div>
+                </div>
+                <h3 class="rank-name">Code Ninja</h3>
+                <p class="rank-description">Szybko i sprawnie rozwiązujesz problemy</p>
+                <div class="rank-exp">
+                    <i class="fas fa-star"></i>
+                    <span>500 - 1500 EXP</span>
+                </div>
+            </div>
+
+            <!-- Rank 4: Algorithm Wizard -->
+            <div class="rank-card rank-wizard" data-rank="4">
+                <div class="rank-glow"></div>
+                <div class="rank-icon-wrapper">
+                    <i class="fas fa-hat-wizard rank-icon"></i>
+                    <div class="rank-particles">
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                    </div>
+                </div>
+                <h3 class="rank-name">Algorithm Wizard</h3>
+                <p class="rank-description">Opanowałeś sztukę algorytmów</p>
+                <div class="rank-exp">
+                    <i class="fas fa-star"></i>
+                    <span>1500 - 3000 EXP</span>
+                </div>
+            </div>
+
+            <!-- Rank 5: Code Architect -->
+            <div class="rank-card rank-architect" data-rank="5">
+                <div class="rank-glow"></div>
+                <div class="rank-icon-wrapper">
+                    <i class="fas fa-drafting-compass rank-icon"></i>
+                    <div class="rank-particles">
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                    </div>
+                </div>
+                <h3 class="rank-name">Code Architect</h3>
+                <p class="rank-description">Projektujesz eleganckie rozwiązania</p>
+                <div class="rank-exp">
+                    <i class="fas fa-star"></i>
+                    <span>3000 - 5000 EXP</span>
+                </div>
+            </div>
+
+            <!-- Rank 6: Tech Mastermind -->
+            <div class="rank-card rank-mastermind" data-rank="6">
+                <div class="rank-glow"></div>
+                <div class="rank-icon-wrapper">
+                    <i class="fas fa-brain rank-icon"></i>
+                    <div class="rank-particles">
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                    </div>
+                </div>
+                <h3 class="rank-name">Tech Mastermind</h3>
+                <p class="rank-description">Twój umysł to maszyna do rozwiązywania problemów</p>
+                <div class="rank-exp">
+                    <i class="fas fa-star"></i>
+                    <span>5000 - 8000 EXP</span>
+                </div>
+            </div>
+
+            <!-- Rank 7: Code Sage -->
+            <div class="rank-card rank-sage" data-rank="7">
+                <div class="rank-glow"></div>
+                <div class="rank-icon-wrapper">
+                    <i class="fas fa-scroll rank-icon"></i>
+                    <div class="rank-particles">
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                    </div>
+                </div>
+                <h3 class="rank-name">Code Sage</h3>
+                <p class="rank-description">Twoja mądrość kodu inspiruje innych</p>
+                <div class="rank-exp">
+                    <i class="fas fa-star"></i>
+                    <span>8000 - 10000 EXP</span>
+                </div>
+            </div>
+
+            <!-- Rank 8: Code Legend -->
+            <div class="rank-card rank-legend" data-rank="8">
+                <div class="rank-glow"></div>
+                <div class="rank-icon-wrapper">
+                    <i class="fas fa-crown rank-icon"></i>
+                    <div class="rank-particles">
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                        <span class="particle"></span>
+                    </div>
+                </div>
+                <h3 class="rank-name">Code Legend</h3>
+                <p class="rank-description">Osiągnąłeś mistrzostwo - jesteś legendą!</p>
+                <div class="rank-exp">
+                    <i class="fas fa-star"></i>
+                    <span>10000+ EXP</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-content">
+            <h2 class="cta-title">Gotowy na wyzwania?</h2>
+            <p class="cta-subtitle">Dołącz do osób rozwijających swoje umiejętności</p>
+            <div class="cta-button-wrapper">
+                <button class="btn btn-large btn-primary cta-btn" id="ctaStartBtn">
+                    <i class="fas fa-rocket"></i> Dołącz do nas
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="cta-background">
+        <div class="cta-shape cta-shape-1"></div>
+        <div class="cta-shape cta-shape-2"></div>
+        <div class="cta-shape cta-shape-3"></div>
+    </div>
+</section>
+{% endblock %}
