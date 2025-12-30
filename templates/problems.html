@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}Zadania Programistyczne - Code Train{% endblock %}
+
+{% block content %}
+<section class="section problems-section">
+    <div class="container">
+        <!-- Header -->
+        <div class="section-header-center">
+            <h2 class="section-title">
+                <i class="fas fa-code"></i> Zadania Programistyczne
+            </h2>
+            <p class="section-subtitle">Rozwiązuj zadania, zdobywaj doświadczenie i wspinaj się w rankingu</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-bar">
+            <div class="filter-group">
+                <label for="difficultyFilter">
+                    <i class="fas fa-filter"></i> Trudność
+                </label>
+                <select id="difficultyFilter" class="filter-select">
+                    <option value="">Wszystkie poziomy</option>
+                    <option value="easy">Łatwe</option>
+                    <option value="medium">Średnie</option>
+                    <option value="hard">Trudne</option>
+                </select>
+            </div>
+            <div class="search-group">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" id="searchInput" class="search-input" placeholder="Szukaj zadań...">
+            </div>
+        </div>
+
+        <div id="problemsList" class="problems-list">
+            <!-- Problems will be loaded here by JavaScript -->
+        </div>
+
+        <!-- Pagination -->
+        <div id="pagination" class="pagination-wrapper">
+            <!-- Pagination will be loaded here by JavaScript -->
+        </div>
+    </div>
+</section>
+{% endblock %}
