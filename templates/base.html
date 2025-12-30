@@ -1,0 +1,310 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Szybkie Wyzwania - Platforma Zadań Programistycznych{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-brand">
+                <a href="{% url 'home' %}" class="logo" style="text-decoration: none; color: inherit;">
+                    <div class="logo-icon">
+                        <div class="logo-bg-layer"></div>
+                        <div class="code-symbol code-symbol-left">&lt;</div>
+                        <div class="code-symbol code-symbol-right">&gt;</div>
+                        <i class="fas fa-trophy trophy-icon"></i>
+                        <div class="trail-dot trail-dot-1"></div>
+                        <div class="trail-dot trail-dot-2"></div>
+                        <div class="trail-dot trail-dot-3"></div>
+                    </div>
+                    <div class="logo-text">
+                        <span class="logo-main">Szybkie<span class="logo-accent">Wyzwania</span></span>
+                        <span class="logo-sub">Testuj swoje umiejętności</span>
+                    </div>
+                </a>
+            </div>
+            <button class="navbar-toggle" id="navbarToggle" aria-label="Toggle navigation">
+                <span class="navbar-toggle-icon"></span>
+                <span class="navbar-toggle-icon"></span>
+                <span class="navbar-toggle-icon"></span>
+            </button>
+            <div class="navbar-menu" id="navbarMenu">
+                <a href="{% url 'home' %}" class="nav-link">Strona główna</a>
+                <a href="{% url 'problems' %}" class="nav-link" id="problemsLink" style="display: none;">Zadania</a>
+                <a href="{% url 'leaderboard' %}" class="nav-link">Ranking</a>
+                <a href="{% url 'profile' %}" class="user-profile-link" id="userProfileLink" style="display: none;">
+                    <i class="fas fa-user-circle"></i>
+                    <span id="usernameDisplay"></span>
+                </a>
+                <button class="btn btn-outline" id="loginBtn">Zaloguj się</button>
+                <button class="btn btn-primary" id="registerBtn">Zarejestruj</button>
+                <button class="btn btn-secondary" id="logoutBtn" style="display: none;">Wyloguj</button>
+            </div>
+        </div>
+    </nav>
+    <div class="navbar-overlay" id="navbarOverlay"></div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="modal-tabs">
+                <button class="modal-tab active" data-tab="login">Logowanie</button>
+                <button class="modal-tab" data-tab="register">Rejestracja</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <h3>Zaloguj się</h3>
+                <input type="text" id="loginUsername" placeholder="Nazwa użytkownika" required>
+                <input type="password" id="loginPassword" placeholder="Hasło" required>
+                <button type="submit" class="btn btn-primary btn-block">Zaloguj</button>
+                <div id="loginError" class="error-message"></div>
+            </form>
+
+            <!-- Register Form -->
+            <form id="registerForm" class="auth-form" style="display: none;">
+                <h3>Zarejestruj się</h3>
+                <input type="text" id="registerUsername" placeholder="Nazwa użytkownika" required>
+                <input type="email" id="registerEmail" placeholder="Email" required>
+                <input type="password" id="registerPassword" placeholder="Hasło" required>
+                <input type="password" id="registerPasswordConfirm" placeholder="Potwierdź hasło" required>
+                <div class="privacy-checkbox-wrapper">
+                    <label class="privacy-checkbox-label">
+                        <input type="checkbox" id="privacyAcceptCheckbox" required>
+                        <span class="checkbox-text">
+                            Akceptuję <a href="#" id="privacyLinkInModal">Politykę Prywatności</a> i wyrażam zgodę na przetwarzanie moich danych osobowych *
+                        </span>
+                    </label>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Zarejestruj</button>
+                <div id="registerError" class="error-message"></div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="privacy-modal" style="display: none;">
+        <div class="privacy-modal-content">
+            <div class="privacy-header">
+                <i class="fas fa-shield-alt"></i>
+                <h2>Polityka Prywatności</h2>
+            </div>
+            <div class="privacy-body">
+                <p class="privacy-intro">
+                    Witaj na platformie <strong>Szybkie Wyzwania</strong>! Dbamy o Twoją prywatność i bezpieczeństwo danych. Poniżej znajdziesz wszystkie informacje o tym, jak przetwarzamy Twoje dane osobowe.
+                </p>
+
+                <h3><i class="fas fa-user-shield"></i> 1. Administrator Danych</h3>
+                <div class="privacy-section">
+                    <p><strong>Administratorem Twoich danych osobowych jest:</strong></p>
+                    <p>Szymon Sulejczak</p>
+                    <p>Email: <a href="mailto:contact@szymonsulejczak.com">contact@szymonsulejczak.com</a></p>
+                    <p>Strona: <a href="https://szymonsulejczak.com" target="_blank">szymonsulejczak.com</a></p>
+                </div>
+
+                <h3><i class="fas fa-database"></i> 2. Jakie Dane Zbieramy</h3>
+                <div class="privacy-section">
+                    <p>Podczas korzystania z platformy zbieramy następujące dane:</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> <strong>Nazwa użytkownika</strong> - podawana podczas rejestracji</li>
+                        <li><i class="fas fa-check"></i> <strong>Adres email</strong> - niezbędny do utworzenia konta i komunikacji</li>
+                        <li><i class="fas fa-check"></i> <strong>Hasło</strong> - przechowywane w formie zaszyfrowanej (hash)</li>
+                        <li><i class="fas fa-check"></i> <strong>Adres IP</strong> - zapisywany automatycznie przez serwer</li>
+                        <li><i class="fas fa-check"></i> <strong>Data i czas logowania</strong> - w celach bezpieczeństwa</li>
+                        <li><i class="fas fa-check"></i> <strong>Rozwiązane zadania i punkty</strong> - do śledzenia postępów</li>
+                        <li><i class="fas fa-check"></i> <strong>Kod źródłowy rozwiązań</strong> - przesyłany do weryfikacji</li>
+                        <li><i class="fas fa-check"></i> <strong>Statystyki korzystania</strong> - w celu poprawy funkcjonalności</li>
+                    </ul>
+                </div>
+
+                <h3><i class="fas fa-bullseye"></i> 3. Cel Przetwarzania Danych</h3>
+                <div class="privacy-section">
+                    <p>Twoje dane przetwarzamy w następujących celach:</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> <strong>Świadczenie usługi</strong> - umożliwienie korzystania z platformy</li>
+                        <li><i class="fas fa-check"></i> <strong>Uwierzytelnianie</strong> - logowanie i zarządzanie kontem</li>
+                        <li><i class="fas fa-check"></i> <strong>Bezpieczeństwo</strong> - ochrona przed nieautoryzowanym dostępem</li>
+                        <li><i class="fas fa-check"></i> <strong>Ranking</strong> - wyświetlanie wyników na tablicy liderów</li>
+                        <li><i class="fas fa-check"></i> <strong>Komunikacja</strong> - kontakt w sprawach technicznych</li>
+                        <li><i class="fas fa-check"></i> <strong>Analityka</strong> - ulepszanie platformy i jej funkcjonalności</li>
+                    </ul>
+                </div>
+
+                <h3><i class="fas fa-balance-scale"></i> 4. Podstawa Prawna</h3>
+                <div class="privacy-section">
+                    <p>Przetwarzanie Twoich danych odbywa się na podstawie:</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> <strong>Art. 6 ust. 1 lit. b RODO</strong> - wykonanie umowy (świadczenie usługi)</li>
+                        <li><i class="fas fa-check"></i> <strong>Art. 6 ust. 1 lit. f RODO</strong> - prawnie uzasadniony interes administratora (bezpieczeństwo, analityka)</li>
+                        <li><i class="fas fa-check"></i> <strong>Art. 6 ust. 1 lit. a RODO</strong> - zgoda użytkownika (cookies, newsletter jeśli dostępny)</li>
+                    </ul>
+                </div>
+
+                <h3><i class="fas fa-cookie-bite"></i> 5. Pliki Cookies i localStorage</h3>
+                <div class="privacy-section">
+                    <p>Używamy plików cookies i technologii localStorage do:</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Zapewnienia prawidłowego działania platformy</li>
+                        <li><i class="fas fa-check"></i> Zapamiętania sesji logowania (token uwierzytelniający)</li>
+                        <li><i class="fas fa-check"></i> Przechowywania preferencji użytkownika</li>
+                        <li><i class="fas fa-check"></i> Zapisywania postępów w rozwiązywaniu zadań</li>
+                    </ul>
+                    <p><small>Możesz zarządzać cookies w ustawieniach swojej przeglądarki.</small></p>
+                </div>
+
+                <h3><i class="fas fa-clock"></i> 6. Czas Przechowywania Danych</h3>
+                <div class="privacy-section">
+                    <p>Twoje dane przechowujemy przez następujący okres:</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> <strong>Konto użytkownika</strong> - do momentu usunięcia konta lub 3 lata od ostatniego logowania</li>
+                        <li><i class="fas fa-check"></i> <strong>Rozwiązania zadań</strong> - przez cały czas trwania konta</li>
+                        <li><i class="fas fa-check"></i> <strong>Logi systemowe</strong> - maksymalnie 12 miesięcy</li>
+                        <li><i class="fas fa-check"></i> <strong>Cookies</strong> - zgodnie z ustawieniami przeglądarki lub do wylogowania</li>
+                    </ul>
+                </div>
+
+                <h3><i class="fas fa-hand-paper"></i> 7. Twoje Prawa</h3>
+                <div class="privacy-section">
+                    <p>Zgodnie z RODO przysługują Ci następujące prawa:</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> <strong>Prawo dostępu</strong> - możesz uzyskać informacje o swoich danych</li>
+                        <li><i class="fas fa-check"></i> <strong>Prawo do sprostowania</strong> - możesz poprawić nieprawidłowe dane</li>
+                        <li><i class="fas fa-check"></i> <strong>Prawo do usunięcia</strong> ("prawo do bycia zapomnianym")</li>
+                        <li><i class="fas fa-check"></i> <strong>Prawo do ograniczenia przetwarzania</strong></li>
+                        <li><i class="fas fa-check"></i> <strong>Prawo do przenoszenia danych</strong></li>
+                        <li><i class="fas fa-check"></i> <strong>Prawo sprzeciwu</strong> wobec przetwarzania danych</li>
+                        <li><i class="fas fa-check"></i> <strong>Prawo do cofnięcia zgody</strong> w dowolnym momencie</li>
+                    </ul>
+                    <p><small>Aby skorzystać z powyższych praw, skontaktuj się z nami przez email.</small></p>
+                </div>
+
+                <h3><i class="fas fa-share-alt"></i> 8. Udostępnianie Danych</h3>
+                <div class="privacy-section">
+                    <p>Twoje dane możemy udostępniać:</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> <strong>Dostawcom usług hostingowych</strong> - przechowywanie danych na serwerze</li>
+                        <li><i class="fas fa-check"></i> <strong>Publicznie w rankingu</strong> - nazwa użytkownika i punkty (dobrowolnie)</li>
+                    </ul>
+                    <p><strong>Nie sprzedajemy ani nie udostępniamy Twoich danych osobom trzecim w celach marketingowych.</strong></p>
+                </div>
+
+                <h3><i class="fas fa-lock"></i> 9. Bezpieczeństwo</h3>
+                <div class="privacy-section">
+                    <p>Stosujemy środki techniczne i organizacyjne zapewniające bezpieczeństwo danych:</p>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Szyfrowanie haseł (bcrypt/PBKDF2)</li>
+                        <li><i class="fas fa-check"></i> Połączenie HTTPS/SSL</li>
+                        <li><i class="fas fa-check"></i> Zabezpieczenia przed atakami (SQL injection, XSS)</li>
+                        <li><i class="fas fa-check"></i> Regularne kopie zapasowe</li>
+                        <li><i class="fas fa-check"></i> Ograniczony dostęp do serwerów</li>
+                    </ul>
+                </div>
+
+                <h3><i class="fas fa-envelope"></i> 10. Kontakt</h3>
+                <div class="privacy-section">
+                    <p>W sprawach dotyczących ochrony danych osobowych możesz się z nami skontaktować:</p>
+                    <p><strong>Email:</strong> <a href="mailto:contact@szymonsulejczak.com">contact@szymonsulejczak.com</a></p>
+                    <p><strong>Strona:</strong> <a href="https://szymonsulejczak.com" target="_blank">szymonsulejczak.com</a></p>
+                    <p><small>Odpowiemy na Twoje zapytanie w ciągu 30 dni.</small></p>
+                </div>
+
+                <h3><i class="fas fa-sync"></i> 11. Zmiany w Polityce</h3>
+                <div class="privacy-section">
+                    <p>Zastrzegamy sobie prawo do wprowadzania zmian w niniejszej Polityce Prywatności. O wszelkich zmianach poinformujemy użytkowników poprzez platformę.</p>
+                    <p><strong>Ostatnia aktualizacja:</strong> 22 grudnia 2025</p>
+                </div>
+
+                <div class="privacy-notice">
+                    <i class="fas fa-info-circle"></i>
+                    <p>Kontynuując korzystanie ze strony i klikając "Akceptuję", zgadzasz się na warunki niniejszej Polityki Prywatności oraz na przetwarzanie danych osobowych zgodnie z powyższymi zasadami.</p>
+                </div>
+            </div>
+            <div class="privacy-footer">
+                <button id="acceptPrivacyBtn" class="btn btn-primary btn-large">
+                    <i class="fas fa-check"></i> Akceptuję Politykę Prywatności
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- Footer Brand -->
+                <div class="footer-section footer-brand">
+                    <div class="footer-logo">
+                        <i class="fas fa-trophy"></i>
+                        <span>SzybkieWyzwania</span>
+                    </div>
+                    <p class="footer-description">Platforma zadań programistycznych, która pomoże Ci doskonalić umiejętności poprzez rozwiązywanie praktycznych wyzwań.</p>
+                    <div class="footer-social">
+                        <a href="https://github.com/szymonsulejczak" target="_blank" rel="noopener noreferrer" class="social-link" title="GitHub">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="https://youtube.com/@szybkiekursiki" target="_blank" rel="noopener noreferrer" class="social-link" title="YouTube">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="https://discord.gg/szybkiekursiki" target="_blank" rel="noopener noreferrer" class="social-link" title="Discord">
+                            <i class="fab fa-discord"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- SzybkieKursiki Section -->
+                <div class="footer-section">
+                    <h4 class="footer-heading">SzybkieKursiki</h4>
+                    <p class="footer-description">
+                        Chcesz rozwijać swoje umiejętności programowania? Sprawdź nasze kursy na platformie SzybkieKursiki!
+                    </p>
+                    <a href="https://szybkie-kursiki.pl" target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-small footer-cta-btn">
+                        <i class="fas fa-rocket"></i>
+                        Odwiedź SzybkieKursiki
+                    </a>
+                </div>
+
+                <!-- Footer Info -->
+                <div class="footer-section">
+                    <h4 class="footer-heading">Informacje</h4>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'home' %}">Strona główna</a></li>
+                        <li><a href="{% url 'problems' %}">Zadania</a></li>
+                        <li><a href="{% url 'leaderboard' %}">Ranking</a></li>
+                        <li><a href="#" id="showPrivacyPolicyLink">Polityka Prywatności</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Footer Bottom -->
+            <div class="footer-bottom">
+                <p class="footer-copyright">
+                    &copy; szybkie-wyzwania.pl - Wszelkie prawa zastrzeżone
+                </p>
+                <p class="footer-author">
+                    Stworzył: <a href="https://szymonsulejczak.com" target="_blank" rel="noopener noreferrer">Szymon Sulejczak</a>
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    {% block extra_js %}{% endblock %}
+    <script src="{% static 'js/app.js' %}?v=22"></script>
+</body>
+</html>
+
+
+
