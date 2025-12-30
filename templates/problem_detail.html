@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ problem.title }} - Code Train{% endblock %}
+
+{% block extra_css %}
+{% endblock %}
+
+{% block content %}
+<section class="section">
+    <div class="container">
+        <div class="problem-detail-header">
+            <a href="{% url 'problems' %}" class="btn btn-outline back-btn">
+                <i class="fas fa-arrow-left"></i> Powrót
+            </a>
+            <div class="problem-detail-title-row">
+                <h1 id="problemTitle">{{ problem.title }}</h1>
+                <div class="problem-meta-badges">
+                    <span class="difficulty-badge difficulty-{{ problem.difficulty }}" id="problemDifficulty">
+                        {{ problem.get_difficulty_display }}
+                    </span>
+                    <span class="points-badge" id="problemPoints">
+                        <i class="fas fa-star"></i> {{ problem.points }} pkt
+                    </span>
+                </div>
+            </div>
+            <div class="problem-stats-inline">
+                <div class="stat-inline">
+                    <i class="fas fa-paper-plane"></i>
+                    <span><strong id="problemSubmissions">{{ problem.total_submissions }}</strong> wysłanych</span>
+                </div>
+                <div class="stat-inline">
+                    <i class="fas fa-check-circle"></i>
+                    <span><strong id="problemAcceptance">{{ problem.acceptance_rate }}%</strong> akceptacji</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="problem-detail-layout">
+            <!-- Left Column: Description & Test Cases -->
+            <div class="problem-detail-left">
+                <div class="problem-description-card">
+                    <h3><i class="fas fa-file-alt"></i> Opis zadania</h3>
+                    <div class="problem-description" id="problemDescription">{{ problem.description }}</div>
+                </div>
+
+                <div class="test-cases-card">
+                    <h3><i class="fas fa-vial"></i> Przykładowe przypadki testowe</h3>
+                    <div id="testCasesList" class="test-cases-list">
+                        <!-- Test cases will be loaded here by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Editor & Results -->
+            <div class="problem-detail-right">
+                <div class="editor-card">
+                    <div class="editor-header">
+                        <div class="editor-title">
+                            <i class="fas fa-code"></i> Edytor kodu
+                        </div>
+                        <div class="editor-controls">
+                            <div class="font-size-control">
+                                <label for="fontSizeSelect"><i class="fas fa-text-height"></i></label>
+                                <select id="fontSizeSelect" class="font-size-select">
+                                    <option value="12">12px</option>
+                                    <option value="14">14px</option>
+                                    <option value="16" selected>16px</option>
+                                    <option value="18">18px</option>
+                                    <option value="20">20px</option>
+                                </select>
+                            </div>
+                            <select id="languageSelect" class="language-select">
+                                <option value="python">Python</option>
+                                <option value="javascript">JavaScript</option>
+                                <option value="csharp">C#</option>
+                                <option value="cpp">C++</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="editor-wrapper">
+                        <div id="codeEditor"></div>
+                    </div>
+                    <div class="editor-footer">
+                        <button class="btn btn-outline" id="runCodeBtn">
+                            Uruchom kod
+                        </button>
+                        <button class="btn btn-outline btn-outline-success" id="submitCodeBtn">
+                            Wyślij rozwiązanie
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Results Panel -->
+                <div id="resultsPanel" class="results-card" style="display: none;">
+                    <div class="results-header">
+                        <h3><i class="fas fa-chart-bar"></i> Wyniki</h3>
+                    </div>
+                    <div id="resultsContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    // Pass problem slug and code templates for each language to JavaScript
+    window.PROBLEM_SLUG = "{{ problem.slug }}";
+
+    {% if problem.function_signature_python %}
+        const pythonTemplate = `{{ problem.function_signature_python|escapejs }}`;
+    {% else %}
+        const pythonTemplate = `# Wpisz swój kod tutaj\n\ndef solution():\n    pass`;
+    {% endif %}
+
+    {% if problem.function_signature_javascript %}
+        const javascriptTemplate = `{{ problem.function_signature_javascript|escapejs }}`;
+    {% else %}
+        const javascriptTemplate = `// Wpisz swój kod tutaj\n\nfunction solution() {\n    // TODO\n}`;
+    {% endif %}
+
+    {% if problem.function_signature_csharp %}
+        const csharpTemplate = `{{ problem.function_signature_csharp|escapejs }}`;
+    {% else %}
+        const csharpTemplate = `// Wpisz swój kod tutaj\n\nusing System;\n\npublic class Solution {\n    public void Solve() {\n        // TODO\n    }\n}`;
+    {% endif %}
+
+    {% if problem.function_signature_cpp %}
+        const cppTemplate = `{{ problem.function_signature_cpp|escapejs }}`;
+    {% else %}
+        const cppTemplate = `// Wpisz swój kod tutaj\n\n#include <iostream>\nusing namespace std;\n\nint main() {\n    // TODO\n    return 0;\n}`;
+    {% endif %}
+
+    window.CODE_TEMPLATES = {
+        python: pythonTemplate,
+        javascript: javascriptTemplate,
+        csharp: csharpTemplate,
+        cpp: cppTemplate
+    };
+
+    console.log('CODE_TEMPLATES loaded:', window.CODE_TEMPLATES);
+</script>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Marked.js for Markdown rendering -->
+<script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
+
+<!-- Monaco Editor -->
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs/loader.js"></script>
+<script>
+    require.config({ paths: { 'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.45.0/min/vs' }});
+
+    // Configure marked.js options
+    if (typeof marked !== 'undefined') {
+        marked.setOptions({
+            breaks: true,
+            gfm: true,
+            headerIds: true,
+            mangle: false
+        });
+    }
+</script>
+{% endblock %}
