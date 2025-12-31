@@ -63,6 +63,11 @@ class Submission(models.Model):
         help_text="Error message if submission failed"
     )
 
+    points_awarded = models.IntegerField(
+        default=0,
+        help_text="Points awarded for this submission"
+    )
+
     submitted_at = models.DateTimeField(auto_now_add=True)
     evaluated_at = models.DateTimeField(null=True, blank=True)
 

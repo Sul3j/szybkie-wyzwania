@@ -72,6 +72,12 @@ class Problem(models.Model):
     total_submissions = models.IntegerField(default=0)
     accepted_submissions = models.IntegerField(default=0)
 
+    @property
+    def acceptance_rate(self):
+        if self.total_submissions == 0:
+            return 0
+        return round((self.accepted_submissions / self.total_submissions) * 100, 2)
+
     class Meta:
         ordering = ['-created_at']
         verbose_name= 'Problem'
