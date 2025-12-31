@@ -16,7 +16,7 @@ Usage:
     python all_problems.py
 
 Or in Docker:
-    docker exec code-train-web-1 python all_problems.py
+    docker exec szybkie-wyzwania-web-1 python all_problems.py
 """
 
 import os
