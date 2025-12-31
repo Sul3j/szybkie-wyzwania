@@ -35,7 +35,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
             difficulty='easy'
         ).count()
     
-    def get_medium_soved(self, obj):
+    def get_medium_solved(self, obj):
         from apps.problems.models import Problem
         solved_problem_ids = obj.user.submission_set.filter(
             status='accepted'
