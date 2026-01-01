@@ -124,7 +124,7 @@ class CodeEvaluator:
                 # First compile - capture errors for better diagnostics
                 command = ['sh', '-c', f'''
 echo "{encoded_code}" | base64 -d > /tmp/solution.cpp && \
-if g++ -std=c++17 -O2 /tmp/solution.cpp -o /tmp/solution 2>&1; then
+if g++ -std=c++20 -O2 /tmp/solution.cpp -o /tmp/solution 2>&1; then
     /tmp/solution
 else
     echo "COMPILATION_FAILED"
@@ -867,6 +867,8 @@ try {
                 wrapper += '        long arg = stol(testInput);\n'
             elif 'double' in param_type or 'float' in param_type:
                 wrapper += '        double arg = stod(testInput);\n'
+            elif 'auto' in param_type:
+                wrapper += '        int arg = stoi(testInput);\n'
             else:
                 wrapper += '        auto arg = testInput;  // fallback\n'
 
@@ -910,6 +912,8 @@ try {
                 wrapper += '        int arg1 = stoi(parts[0]);\n'
             elif 'long' in param_type1:
                 wrapper += '        long arg1 = stol(parts[0]);\n'
+            elif 'auto' in param_type1:
+                wrapper += '        int arg1 = stoi(parts[0]);\n'
             else:
                 wrapper += '        auto arg1 = parts[0];\n'
 
@@ -925,6 +929,8 @@ try {
                 wrapper += '        int arg2 = stoi(parts[1]);\n'
             elif 'long' in param_type2:
                 wrapper += '        long arg2 = stol(parts[1]);\n'
+            elif 'auto' in param_type2:
+                wrapper += '        int arg2 = stoi(parts[1]);\n'
             else:
                 wrapper += '        auto arg2 = parts[1];\n'
 

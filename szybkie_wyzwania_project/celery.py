@@ -1,9 +1,9 @@
 import os
 from celery import Celery
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'code_train_project.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'szybkie_wyzwania_project.settings')
 
-app = Celery('code_train_project')
+app = Celery('szybkie_wyzwania_project')
 
 app.config_from_object('django.conf:settings', namespace='CELERY')
 

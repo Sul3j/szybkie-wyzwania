@@ -1,3 +1,4 @@
+
 # Szybkie Wyzwania (Quick Challenges)
 
 A competitive programming platform for solving coding challenges in multiple programming languages. Built with Django REST Framework and Docker.

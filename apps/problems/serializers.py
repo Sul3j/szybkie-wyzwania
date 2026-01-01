@@ -39,7 +39,7 @@ class ProblemListSerializer(serializers.ModelSerializer):
     tags = ProblemTagSerializer(many=True, read_only=True)
     is_solved = serializers.SerializerMethodField()
     solved_language = serializers.SerializerMethodField()
-    suppoorted_languages_list = serializers.ListField(read_only=True)
+    supported_languages_list = serializers.ListField(read_only=True)
 
     class Meta:
         model = Problem
@@ -47,7 +47,7 @@ class ProblemListSerializer(serializers.ModelSerializer):
             'id', 'title', 'slug', 'difficulty', 'points',
             'acceptance_rate', 'total_submissions', 'created_by',
             'created_at', 'tags', 'is_solved', 'solved_language',
-            'languages', 'suppoorted_languages_list'
+            'languages', 'supported_languages_list'
         ]
         read_only_fields = ['id', 'slug', 'total_submissions', 'accepted_submissions']
 
@@ -81,7 +81,7 @@ class ProblemDetailSerializer(serializers.ModelSerializer):
 
     created_by = serializers.CharField(source='created_by.username', read_only=True)
     acceptance_rate = serializers.FloatField(read_only=True)
-    suppoorted_languages_list = serializers.ListField(read_only=True)
+    supported_languages_list = serializers.ListField(read_only=True)
     test_cases = serializers.SerializerMethodField()
     hints = ProblemHintSerializer(many=True, read_only=True)
     tags = ProblemTagSerializer(many=True, read_only=True)
