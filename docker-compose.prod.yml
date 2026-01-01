@@ -1,0 +1,124 @@
+version: '3.8'
+
+# Production docker-compose configuration for VPS deployment
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: szybkie-wyzwania-db
+    restart: always
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432"  # Port 5433 on host to avoid conflicts
+    networks:
+      - szybkie-wyzwania-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: szybkie-wyzwania-redis
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - szybkie-wyzwania-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  web:
+    image: ghcr.io/${GITHUB_USERNAME}/szybkie-wyzwania:latest
+    container_name: szybkie-wyzwania-web
+    restart: always
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn szybkie_wyzwania_project.wsgi:application --bind 0.0.0.0:8000 --workers 3 --timeout 120"
+    volumes:
+      - ./static:/app/staticfiles
+      - ./media:/app/media
+      - ./logs:/app/logs
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    networks:
+      - szybkie-wyzwania-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  celery:
+    image: ghcr.io/${GITHUB_USERNAME}/szybkie-wyzwania:latest
+    container_name: szybkie-wyzwania-celery
+    restart: always
+    command: celery -A szybkie_wyzwania_project worker -l info --concurrency=2
+    volumes:
+      - ./logs:/app/logs
+      - /var/run/docker.sock:/var/run/docker.sock
+    depends_on:
+      - db
+      - redis
+      - web
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    networks:
+      - szybkie-wyzwania-net
+
+  celery-beat:
+    image: ghcr.io/${GITHUB_USERNAME}/szybkie-wyzwania:latest
+    container_name: szybkie-wyzwania-beat
+    restart: always
+    command: celery -A szybkie_wyzwania_project beat -l info
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      - db
+      - redis
+    environment:
+      - DEBUG=False
+      - SECRET_KEY=${SECRET_KEY}
+      - DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@db:5432/${DB_NAME}
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/0
+      - CELERY_RESULT_BACKEND=redis://redis:6379/0
+    networks:
+      - szybkie-wyzwania-net
+
+networks:
+  szybkie-wyzwania-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:
