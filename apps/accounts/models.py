@@ -35,20 +35,20 @@ class UserProfile(models.Model):
         self.save()
 
     def _update_level(self):
-        for level, treshold in sorted(
-            settings.LEVEL_TRESHOLDS.items(),
+        for level, threshold in sorted(
+            settings.LEVEL_THRESHOLDS.items(),
             reverse=True
         ):
-            if self.experience_points >= treshold:
+            if self.experience_points >= threshold:
                 self.level = level
                 break
     
     def _update_rank(self):
-        for treshold, rank in sorted(
+        for threshold, rank in sorted(
             settings.RANKS.items(),
             reverse=True
         ):
-            if self.experience_points >= treshold:
+            if self.experience_points >= threshold:
                 self.rank = rank
                 break
 
