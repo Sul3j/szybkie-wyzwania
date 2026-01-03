@@ -55,6 +55,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: Verify secrets are set
+      run: |
+        echo "Checking if secrets are configured..."
+        if [ -z "${{ secrets.VPS_HOST }}" ]; then echo "ERROR: VPS_HOST is not set"; exit 1; fi
+        if [ -z "${{ secrets.VPS_USERNAME }}" ]; then echo "ERROR: VPS_USERNAME is not set"; exit 1; fi
+        if [ -z "${{ secrets.VPS_SSH_KEY }}" ]; then echo "ERROR: VPS_SSH_KEY is not set"; exit 1; fi
+        if [ -z "${{ secrets.VPS_PORT }}" ]; then echo "ERROR: VPS_PORT is not set"; exit 1; fi
+        echo "All secrets are configured ✓"
+        echo "VPS_HOST length: $(echo -n '${{ secrets.VPS_HOST }}' | wc -c) characters"
+        echo "VPS_USERNAME length: $(echo -n '${{ secrets.VPS_USERNAME }}' | wc -c) characters"
+        echo "VPS_SSH_KEY length: $(echo -n '${{ secrets.VPS_SSH_KEY }}' | wc -c) characters"
+        echo "VPS_PORT: ${{ secrets.VPS_PORT }}"
+
+    - name: Debug SSH key format
+      run: |
+        echo "Checking SSH key format..."
+        if echo '${{ secrets.VPS_SSH_KEY }}' | grep -q "BEGIN.*PRIVATE KEY"; then
+          echo "✓ SSH key appears to have correct header"
+        else
+          echo "✗ WARNING: SSH key may be missing header (-----BEGIN ... PRIVATE KEY-----)"
+        fi
+        if echo '${{ secrets.VPS_SSH_KEY }}' | grep -q "END.*PRIVATE KEY"; then
+          echo "✓ SSH key appears to have correct footer"
+        else
+          echo "✗ WARNING: SSH key may be missing footer (-----END ... PRIVATE KEY-----)"
+        fi
+
     - name: Deploy to VPS
       uses: appleboy/ssh-action@v1.2.0
       with:
@@ -62,6 +89,7 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         key: ${{ secrets.VPS_SSH_KEY }}
         port: ${{ secrets.VPS_PORT }}
+        debug: true
         script: |
           cd /opt/szybkie-wyzwania
 
