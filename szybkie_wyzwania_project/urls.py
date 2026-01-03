@@ -20,11 +20,11 @@ urlpatterns = [
     path('api/leaderboard/', include('apps.leaderboard.urls')),
 
     path('', home_view, name='home'),
-    path('register/', register_view, name='register'),
-    path('problems/', problems_view, name='problems'),
-    path('problems/<slug:slug>/', problem_detail_view, name='problem-detail'),
-    path('leaderboard/', leaderboard_view, name='leaderboard'),
-    path('profile/', profile_view, name='profile'),
+    path('register/', register_view, name='register-page'),
+    path('problems/', problems_view, name='problems-page'),
+    path('problems/<slug:slug>/', problem_detail_view, name='problem-detail-page'),
+    path('leaderboard/', leaderboard_view, name='leaderboard-page'),
+    path('profile/', profile_view, name='profile-page'),
 ]
 
 if settings.DEBUG:

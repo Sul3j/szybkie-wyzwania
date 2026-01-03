@@ -14,7 +14,12 @@ class UserProfile(models.Model):
 
     experience_points = models.IntegerField(default=0)
     level = models.IntegerField(default=1)
-    rank = models.CharField(max_length=50, default="Beginner")
+    rank = models.CharField(max_length=50, default="Bronze")
+
+    # Submission counters (cached for performance)
+    total_submissions_count = models.IntegerField(default=0)
+    accepted_submissions_count = models.IntegerField(default=0)
+
     bio = models.TextField(blank=True, null=True, max_length=500)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -26,7 +31,7 @@ class UserProfile(models.Model):
         verbose_name_plural = 'User Profiles'
 
     def __str__(self):
-        return f"{self.user.username}'s Profile (Level {self.level})"
+        return f"{self.user.username}'s Profile"
     
     def add_experience(self, points):
         self.experience_points += points
@@ -52,22 +57,34 @@ class UserProfile(models.Model):
                 self.rank = rank
                 break
 
+    def increment_submissions(self, accepted=False):
+        """Increment submission counters."""
+        self.total_submissions_count += 1
+        if accepted:
+            self.accepted_submissions_count += 1
+        self.save()
+
     @property
     def solved_count(self):
         return self.user.submission_set.filter(
             status='accepted'
         ).values('problem').distinct().count()
-    
+
     @property
     def total_submissions(self):
-        return self.user.submission_set.count()
-    
+        """Total number of submissions (from cached counter)."""
+        return self.total_submissions_count
+
+    @property
+    def accepted_submissions(self):
+        """Number of accepted submissions (from cached counter)."""
+        return self.accepted_submissions_count
+
     @property
     def acceptance_rate(self):
-        if self.total_submissions == 0:
-            return 0
-        accepted = self.user.submission_set.filter(status='accepted').count()
-        return round((accepted / self.total_submissions) * 100, 2)
+        if self.total_submissions_count == 0:
+            return 0.0
+        return round((self.accepted_submissions_count / self.total_submissions_count) * 100, 2)
     
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):

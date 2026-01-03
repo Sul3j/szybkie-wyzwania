@@ -199,12 +199,12 @@ LEVEL_THRESHOLDS = {
 }
 
 RANKS = {
-    0: "Beginner",
-    1000: "Novice",
-    3000: "Intermediate",
-    6000: "Advanced",
-    10000: "Expert",
-    15000: "Master",
+    0: "Bronze",
+    1000: "Silver",
+    5000: "Gold",
+    10000: "Platinum",
+    15000: "Diamond",
+    20000: "Master",
 }
 
 if not DEBUG:

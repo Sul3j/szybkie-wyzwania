@@ -82,7 +82,7 @@ class Submission(models.Model):
         ]
 
     def __str__(self):
-        return f"{self.user.username} - {self.problem.title} ({self.status})"
+        return f"{self.user.username} - {self.problem.title} ({self.language})"
     
 
     @property

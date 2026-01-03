@@ -9,8 +9,6 @@ from .views import (
     ProblemSubmissionsView,
 )
 
-app_name = 'submissions'
-
 urlpatterns = [
     # Submission CRUD
     path('', SubmissionListView.as_view(), name='submission-list'),

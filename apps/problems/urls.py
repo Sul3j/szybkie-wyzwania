@@ -11,9 +11,10 @@ from .views import (
     RandomProblemView,
 )
 
-app_name = 'problems'
-
 urlpatterns = [
+    # Random problem (must be before <slug:slug>/)
+    path('random/', RandomProblemView.as_view(), name='problem-random'),
+
     # Problem CRUD
     path('', ProblemListView.as_view(), name='problem-list'),
     path('create/', ProblemCreateView.as_view(), name='problem-create'),
@@ -27,7 +28,4 @@ urlpatterns = [
     # Statistics
     path('stats/overall/', ProblemStatsView.as_view(), name='problem-stats'),
     path('stats/user/', UserProblemStatsView.as_view(), name='user-problem-stats'),
-
-    # Random problem
-    path('random/', RandomProblemView.as_view(), name='random-problem'),
 ]

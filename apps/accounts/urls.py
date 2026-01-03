@@ -10,8 +10,6 @@ from .views import (
     PublicProfileView,
 )
 
-app_name = 'accounts'
-
 urlpatterns = [
     # Authentication
     path('register/', RegisterView.as_view(), name='register'),
@@ -20,10 +18,10 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(), name='logout'),
 
     # User profile
-    path('profile/', ProfileView.as_view(), name='profile'),
+    path('profile/', ProfileView.as_view(), name='user-profile'),
     path('me/', UserDetailView.as_view(), name='user-detail'),
     path('change-password/', ChangePasswordView.as_view(), name='change-password'),
 
     # Public profiles
-    path('users/<str:username>/', PublicProfileView.as_view(), name='public-profile'),
+    path('users/<str:username>/', PublicProfileView.as_view(), name='user-public-profile'),
 ]
