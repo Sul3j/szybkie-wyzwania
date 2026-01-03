@@ -40,7 +40,7 @@ class RankLeaderboardView(APIView):
     def get(self, request):
         rank_distribution = []
 
-        for rank in ["Bronze", "Silver", "Gold", "Platinum", "Diamond", "Master"]:
+        for rank in ["Code Rookie", "Bug Hunter", "Code Ninja", "Algorithm Wizard", "Code Architect", "Tech Mastermind", "Code Sage", "Code Legend"]:
             users = UserProfile.objects.filter(rank=rank).select_related("user")
             rank_distribution.append(
                 {

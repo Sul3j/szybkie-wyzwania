@@ -37,9 +37,9 @@
             </button>
             <div class="navbar-menu" id="navbarMenu">
                 <a href="{% url 'home' %}" class="nav-link">Strona główna</a>
-                <a href="{% url 'problems' %}" class="nav-link" id="problemsLink" style="display: none;">Zadania</a>
-                <a href="{% url 'leaderboard' %}" class="nav-link">Ranking</a>
-                <a href="{% url 'profile' %}" class="user-profile-link" id="userProfileLink" style="display: none;">
+                <a href="{% url 'problems-page' %}" class="nav-link" id="problemsLink" style="display: none;">Zadania</a>
+                <a href="{% url 'leaderboard-page' %}" class="nav-link">Ranking</a>
+                <a href="{% url 'profile-page' %}" class="user-profile-link" id="userProfileLink" style="display: none;">
                     <i class="fas fa-user-circle"></i>
                     <span id="usernameDisplay"></span>
                 </a>
@@ -252,13 +252,13 @@
                     </div>
                     <p class="footer-description">Platforma zadań programistycznych, która pomoże Ci doskonalić umiejętności poprzez rozwiązywanie praktycznych wyzwań.</p>
                     <div class="footer-social">
-                        <a href="https://github.com/szymonsulejczak" target="_blank" rel="noopener noreferrer" class="social-link" title="GitHub">
+                        <a href="https://github.com/szybkie-kursiki" target="_blank" rel="noopener noreferrer" class="social-link" title="GitHub">
                             <i class="fab fa-github"></i>
                         </a>
-                        <a href="https://youtube.com/@szybkiekursiki" target="_blank" rel="noopener noreferrer" class="social-link" title="YouTube">
+                        <a href="https://www.youtube.com/@szybkiekursikipl" target="_blank" rel="noopener noreferrer" class="social-link" title="YouTube">
                             <i class="fab fa-youtube"></i>
                         </a>
-                        <a href="https://discord.gg/szybkiekursiki" target="_blank" rel="noopener noreferrer" class="social-link" title="Discord">
+                        <a href="https://discord.gg/NcV6g6Up" target="_blank" rel="noopener noreferrer" class="social-link" title="Discord">
                             <i class="fab fa-discord"></i>
                         </a>
                     </div>
@@ -281,8 +281,8 @@
                     <h4 class="footer-heading">Informacje</h4>
                     <ul class="footer-links">
                         <li><a href="{% url 'home' %}">Strona główna</a></li>
-                        <li><a href="{% url 'problems' %}">Zadania</a></li>
-                        <li><a href="{% url 'leaderboard' %}">Ranking</a></li>
+                        <li><a href="{% url 'problems-page' %}">Zadania</a></li>
+                        <li><a href="{% url 'leaderboard-page' %}">Ranking</a></li>
                         <li><a href="#" id="showPrivacyPolicyLink">Polityka Prywatności</a></li>
                     </ul>
                 </div>

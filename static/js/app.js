@@ -1252,7 +1252,7 @@ function displayLeaderboard(data, type) {
         }
 
         // Get user rank based on experience points
-        const userExp = item.experience_points || 0;
+        const userExp = item.experience_points || item.total_experience || 0;
         const userRank = getRankByExp(userExp);
 
         // Calculate score for this user

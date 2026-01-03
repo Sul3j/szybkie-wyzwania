@@ -203,12 +203,14 @@ LEVEL_THRESHOLDS = {
 }
 
 RANKS = {
-    0: "Bronze",
-    1000: "Silver",
-    5000: "Gold",
-    10000: "Platinum",
-    15000: "Diamond",
-    20000: "Master",
+    0: "Code Rookie",
+    100: "Bug Hunter",
+    500: "Code Ninja",
+    1500: "Algorithm Wizard",
+    3000: "Code Architect",
+    5000: "Tech Mastermind",
+    8000: "Code Sage",
+    10000: "Code Legend",
 }
 
 if not DEBUG:
