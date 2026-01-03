@@ -92,10 +92,12 @@ class WeeklyLeaderboardView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        from datetime import datetime, timedelta
+        from datetime import timedelta
+
+        from django.utils import timezone
 
         limit = int(request.query_params.get("limit", 100))
-        week_ago = datetime.now() - timedelta(days=7)
+        week_ago = timezone.now() - timedelta(days=7)
 
         weekly_submissions = Submission.objects.filter(
             status="accepted", submitted_at__gte=week_ago
