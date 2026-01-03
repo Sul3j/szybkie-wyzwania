@@ -40,6 +40,9 @@ jobs:
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        persist-credentials: true
 
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -120,10 +123,15 @@ jobs:
         isort .
 
     - name: Commit formatted code
+      if: github.event_name == 'push'
       run: |
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
-        git diff --quiet || (git add -A && git commit -m "Auto-format code with black and isort [skip ci]" && git push)
+        if ! git diff --quiet; then
+          git add -A
+          git commit -m "Auto-format code with black and isort [skip ci]"
+          git push https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:${{ github.ref }}
+        fi
 
     - name: Lint with flake8
       run: |
