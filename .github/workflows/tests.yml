@@ -9,6 +9,8 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
 
     services:
       postgres:
@@ -109,13 +111,19 @@ jobs:
       run: |
         pip install black flake8 isort
 
-    - name: Check code formatting with black
+    - name: Format code with black (auto-fix)
       run: |
-        black --check .
+        black .
 
-    - name: Check import sorting with isort
+    - name: Sort imports with isort (auto-fix)
       run: |
-        isort --check-only .
+        isort .
+
+    - name: Commit formatted code
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git diff --quiet || (git add -A && git commit -m "Auto-format code with black and isort [skip ci]" && git push)
 
     - name: Lint with flake8
       run: |
