@@ -21,6 +21,7 @@ class UserProfile(models.Model):
     accepted_submissions_count = models.IntegerField(default=0)
 
     bio = models.TextField(blank=True, null=True, max_length=500)
+    github_url = models.URLField(blank=True, null=True, max_length=200)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

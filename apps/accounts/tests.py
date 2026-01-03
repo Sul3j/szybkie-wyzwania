@@ -47,15 +47,20 @@ class TestUserProfileModel:
         # Start at Bronze (level 1)
         assert profile.rank == 'Bronze'
 
-        # Level up to 5 (Silver rank)
-        profile.add_experience(1000)  # Level 5 threshold
+        # Level up to 5 (Silver rank - 1000 XP)
+        profile.add_experience(1000)
         assert profile.level == 5
         assert profile.rank == 'Silver'
 
-        # Level up to 10 (Gold rank)
-        profile.add_experience(10000)
-        assert profile.level >= 10
+        # Level up to Gold rank (5000 XP)
+        profile.add_experience(4000)
+        assert profile.experience_points == 5000
         assert profile.rank == 'Gold'
+
+        # Level up to Platinum rank (10000 XP)
+        profile.add_experience(5000)
+        assert profile.experience_points == 10000
+        assert profile.rank == 'Platinum'
 
     def test_increment_submissions(self, user):
         """Test incrementing submission counters."""
@@ -309,16 +314,20 @@ class TestXPLevelSystem:
         """Test rank changes with levels."""
         profile = user.profile
 
-        # Bronze (level 1-4)
+        # Bronze (0 XP)
         assert profile.rank == 'Bronze'
 
-        # Silver (level 5-9)
+        # Silver (1000 XP)
         profile.add_experience(1000)
         assert profile.rank == 'Silver'
 
-        # Gold (level 10-14)
-        profile.add_experience(10000)
+        # Gold (5000 XP)
+        profile.add_experience(4000)
         assert profile.rank == 'Gold'
+
+        # Platinum (10000 XP)
+        profile.add_experience(5000)
+        assert profile.rank == 'Platinum'
 
     def test_xp_never_decreases(self, user):
         """Test that XP never decreases."""

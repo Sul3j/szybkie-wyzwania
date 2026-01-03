@@ -33,14 +33,15 @@ class RankLeaderboardView(APIView):
     permission_classes = [permissions.AllowAny]
 
     def get(self, request):
-        rank_distribution = {}
+        rank_distribution = []
 
-        for rank in ['Beginner', 'Novice', 'Intermediate', 'Advanced', 'Expert', 'Master']:
+        for rank in ['Bronze', 'Silver', 'Gold', 'Platinum', 'Diamond', 'Master']:
             users = UserProfile.objects.filter(rank=rank).select_related('user')
-            rank_distribution[rank] = {
+            rank_distribution.append({
+                'rank': rank,
                 'count': users.count(),
                 'top_users': UserProfileSerializer(users[:10], many=True).data
-            }
+            })
 
         return Response(rank_distribution)
 

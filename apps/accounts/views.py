@@ -8,6 +8,7 @@ from .models import UserProfile
 from .serializers import (
     UserSerializer,
     UserProfileSerializer,
+    PublicUserProfileSerializer,
     RegisterSerializer,
     ChangePasswordSerializer
 )
@@ -102,7 +103,7 @@ class LogoutView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
 class PublicProfileView(generics.RetrieveAPIView):
-    serializer_class = UserProfileSerializer
+    serializer_class = PublicUserProfileSerializer
     permission_classes = [permissions.AllowAny]
     queryset = UserProfile.objects.all()
     lookup_field = 'user__username'

@@ -142,7 +142,7 @@ class ProblemDetailSerializer(serializers.ModelSerializer):
 
 class ProblemCreateSerializer(serializers.ModelSerializer):
 
-    test_cases = TestCaseSerializer(many=True, write_only=True)
+    test_cases = TestCaseSerializer(many=True, write_only=True, required=False)
     hints = ProblemHintSerializer(many=True, required=False, write_only=True)
     tag_ids = serializers.ListField(
         child=serializers.IntegerField(),
@@ -160,7 +160,7 @@ class ProblemCreateSerializer(serializers.ModelSerializer):
         ]
 
     def create(self, validated_data):
-        test_cases_data = validated_data.pop('test_cases')
+        test_cases_data = validated_data.pop('test_cases', [])
         hints_data = validated_data.pop('hints', [])
         tag_ids = validated_data.pop('tag_ids', [])
 
