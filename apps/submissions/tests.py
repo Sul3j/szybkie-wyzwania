@@ -1,9 +1,11 @@
 """
 Tests for submissions app - Code Submissions and Evaluation
 """
+
 import pytest
 from django.urls import reverse
 from rest_framework import status
+
 from apps.submissions.models import Submission
 
 
@@ -13,9 +15,9 @@ class TestSubmissionModel:
 
     def test_submission_creation(self, submission):
         """Test submission is created correctly."""
-        assert submission.code == 'def add(a, b):\\n    return a + b'
-        assert submission.language == 'python'
-        assert submission.status == 'pending'
+        assert submission.code == "def add(a, b):\\n    return a + b"
+        assert submission.language == "python"
+        assert submission.status == "pending"
 
     def test_submission_string_representation(self, submission):
         """Test __str__ method."""
@@ -27,86 +29,95 @@ class TestSubmissionModel:
 class TestSubmissionAPI:
     """Test Submission API endpoints."""
 
-    def test_create_submission(self, authenticated_client, problem_with_tests, mock_celery):
+    def test_create_submission(
+        self, authenticated_client, problem_with_tests, mock_celery
+    ):
         """Test creating a submission."""
-        url = reverse('submission-create')
+        url = reverse("submission-create")
         data = {
-            'problem_slug': problem_with_tests.slug,
-            'code': 'def add(a, b):\\n    return a + b',
-            'language': 'python'
+            "problem_slug": problem_with_tests.slug,
+            "code": "def add(a, b):\\n    return a + b",
+            "language": "python",
         }
 
-        response = authenticated_client.post(url, data, format='json')
+        response = authenticated_client.post(url, data, format="json")
 
         assert response.status_code == status.HTTP_201_CREATED
-        assert 'id' in response.data
-        assert response.data['status'] == 'pending'
+        assert "id" in response.data
+        assert response.data["status"] == "pending"
 
         # Verify Celery task was called
         mock_celery.assert_called_once()
 
     def test_create_submission_unauthenticated(self, api_client, problem_with_tests):
         """Test creating submission fails when not authenticated."""
-        url = reverse('submission-create')
+        url = reverse("submission-create")
         data = {
-            'problem_slug': problem_with_tests.slug,
-            'code': 'def add(a, b):\\n    return a + b',
-            'language': 'python'
+            "problem_slug": problem_with_tests.slug,
+            "code": "def add(a, b):\\n    return a + b",
+            "language": "python",
         }
 
-        response = api_client.post(url, data, format='json')
+        response = api_client.post(url, data, format="json")
 
         assert response.status_code == status.HTTP_401_UNAUTHORIZED
 
     def test_list_user_submissions(self, authenticated_client, submission):
         """Test listing user's own submissions."""
-        url = reverse('submission-list')
+        url = reverse("submission-list")
         response = authenticated_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert len(response.data['results']) >= 1
+        assert len(response.data["results"]) >= 1
 
     def test_get_submission_detail(self, authenticated_client, submission):
         """Test getting submission detail."""
-        url = reverse('submission-detail', kwargs={'pk': submission.id})
+        url = reverse("submission-detail", kwargs={"pk": submission.id})
         response = authenticated_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data['code'] == submission.code
+        assert response.data["code"] == submission.code
 
-    def test_cannot_view_others_submission(self, authenticated_client, submission, user2):
+    def test_cannot_view_others_submission(
+        self, authenticated_client, submission, user2
+    ):
         """Test user cannot view other user's submission."""
         # Create submission for user2
         submission.user = user2
         submission.save()
 
-        url = reverse('submission-detail', kwargs={'pk': submission.id})
+        url = reverse("submission-detail", kwargs={"pk": submission.id})
         response = authenticated_client.get(url)
 
         # Should be forbidden or not found
-        assert response.status_code in [status.HTTP_403_FORBIDDEN, status.HTTP_404_NOT_FOUND]
+        assert response.status_code in [
+            status.HTTP_403_FORBIDDEN,
+            status.HTTP_404_NOT_FOUND,
+        ]
 
 
 @pytest.mark.integration
 class TestSubmissionWorkflow:
     """Test end-to-end submission workflow."""
 
-    def test_submission_awards_points_on_first_accept(self, authenticated_client, problem_with_tests, user, mock_celery):
+    def test_submission_awards_points_on_first_accept(
+        self, authenticated_client, problem_with_tests, user, mock_celery
+    ):
         """Test that points are awarded only on first accepted submission."""
         # Create first submission
-        url = reverse('submission-create')
+        url = reverse("submission-create")
         data = {
-            'problem_slug': problem_with_tests.slug,
-            'code': 'def add(a, b):\\n    return a + b',
-            'language': 'python'
+            "problem_slug": problem_with_tests.slug,
+            "code": "def add(a, b):\\n    return a + b",
+            "language": "python",
         }
 
-        response = authenticated_client.post(url, data, format='json')
-        submission_id = response.data['id']
+        response = authenticated_client.post(url, data, format="json")
+        submission_id = response.data["id"]
 
         # Simulate accepted submission
         submission = Submission.objects.get(id=submission_id)
-        submission.status = 'accepted'
+        submission.status = "accepted"
         submission.save()
 
         # Award points (normally done in Celery task)

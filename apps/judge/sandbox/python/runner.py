@@ -1,19 +1,19 @@
 #!/usr/bin/env python3
-import sys
-import os
 import json
-import signal
+import os
 import resource
+import signal
+import sys
 
 
 def set_limits():
     """Set resource limits for the process."""
     # CPU time limit (in seconds)
-    time_limit = int(os.environ.get('TIME_LIMIT', 2000)) // 1000
+    time_limit = int(os.environ.get("TIME_LIMIT", 2000)) // 1000
     resource.setrlimit(resource.RLIMIT_CPU, (time_limit, time_limit))
 
     # Memory limit (in bytes)
-    memory_limit = int(os.environ.get('MEMORY_LIMIT', 128)) * 1024 * 1024
+    memory_limit = int(os.environ.get("MEMORY_LIMIT", 128)) * 1024 * 1024
     resource.setrlimit(resource.RLIMIT_AS, (memory_limit, memory_limit))
 
 
@@ -35,36 +35,45 @@ def run_code(code, test_input):
     """
     # Restricted imports - only allow safe modules
     allowed_modules = {
-        'math', 'random', 'itertools', 'collections',
-        'functools', 'operator', 'string', 're',
-        'datetime', 'json', 'heapq', 'bisect'
+        "math",
+        "random",
+        "itertools",
+        "collections",
+        "functools",
+        "operator",
+        "string",
+        "re",
+        "datetime",
+        "json",
+        "heapq",
+        "bisect",
     }
 
     # Create restricted globals
     restricted_globals = {
-        '__builtins__': {
-            'print': print,
-            'range': range,
-            'len': len,
-            'int': int,
-            'float': float,
-            'str': str,
-            'list': list,
-            'dict': dict,
-            'set': set,
-            'tuple': tuple,
-            'bool': bool,
-            'max': max,
-            'min': min,
-            'sum': sum,
-            'abs': abs,
-            'sorted': sorted,
-            'enumerate': enumerate,
-            'zip': zip,
-            'map': map,
-            'filter': filter,
-            'all': all,
-            'any': any,
+        "__builtins__": {
+            "print": print,
+            "range": range,
+            "len": len,
+            "int": int,
+            "float": float,
+            "str": str,
+            "list": list,
+            "dict": dict,
+            "set": set,
+            "tuple": tuple,
+            "bool": bool,
+            "max": max,
+            "min": min,
+            "sum": sum,
+            "abs": abs,
+            "sorted": sorted,
+            "enumerate": enumerate,
+            "zip": zip,
+            "map": map,
+            "filter": filter,
+            "all": all,
+            "any": any,
         }
     }
 
@@ -84,7 +93,7 @@ def run_code(code, test_input):
         input_data = test_input
 
     # Prepare code execution
-    restricted_globals['input_data'] = input_data
+    restricted_globals["input_data"] = input_data
 
     # Execute code
     try:
@@ -101,15 +110,17 @@ def main():
         set_limits()
 
         # Set timeout alarm
-        time_limit = int(os.environ.get('TIME_LIMIT', 2000)) // 1000 + 1
+        time_limit = int(os.environ.get("TIME_LIMIT", 2000)) // 1000 + 1
         signal.signal(signal.SIGALRM, timeout_handler)
         signal.alarm(time_limit)
 
         # Get code from stdin or environment
-        code = sys.stdin.read() if not sys.stdin.isatty() else os.environ.get('CODE', '')
+        code = (
+            sys.stdin.read() if not sys.stdin.isatty() else os.environ.get("CODE", "")
+        )
 
         # Get test input
-        test_input = os.environ.get('TEST_INPUT', '')
+        test_input = os.environ.get("TEST_INPUT", "")
 
         # Run the code
         run_code(code, test_input)
@@ -125,5 +136,5 @@ def main():
         sys.exit(1)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

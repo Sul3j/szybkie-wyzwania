@@ -1,6 +1,7 @@
 """
 Tests for leaderboard app - Rankings and Statistics
 """
+
 import pytest
 from django.urls import reverse
 from rest_framework import status
@@ -12,32 +13,32 @@ class TestLeaderboardAPI:
 
     def test_global_leaderboard(self, api_client, user):
         """Test getting global leaderboard."""
-        url = reverse('leaderboard-global')
+        url = reverse("leaderboard-global")
         response = api_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert 'results' in response.data
-        assert isinstance(response.data['results'], list)
+        assert "results" in response.data
+        assert isinstance(response.data["results"], list)
 
     def test_user_rank(self, authenticated_client, user):
         """Test getting user's current rank."""
-        url = reverse('my-rank')
+        url = reverse("my-rank")
         response = authenticated_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-        assert 'rank' in response.data
-        assert 'experience_points' in response.data
+        assert "rank" in response.data
+        assert "experience_points" in response.data
 
     def test_level_leaderboard(self, api_client):
         """Test getting level-based leaderboard."""
-        url = reverse('leaderboard-level')
+        url = reverse("leaderboard-level")
         response = api_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
 
     def test_rank_distribution(self, api_client, user):
         """Test getting rank distribution."""
-        url = reverse('leaderboard-rank')
+        url = reverse("leaderboard-rank")
         response = api_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
@@ -45,7 +46,7 @@ class TestLeaderboardAPI:
 
     def test_problem_solvers_leaderboard(self, api_client):
         """Test getting top problem solvers."""
-        url = reverse('leaderboard-solvers')
+        url = reverse("leaderboard-solvers")
         response = api_client.get(url)
 
         assert response.status_code == status.HTTP_200_OK

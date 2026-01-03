@@ -1,30 +1,23 @@
-from django.contrib import admin
-from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
-from .views import (
-    home_view,
-    problems_view,
-    problem_detail_view,
-    leaderboard_view,
-    profile_view,
-    register_view,
-)
+from django.contrib import admin
+from django.urls import include, path
+
+from .views import (home_view, leaderboard_view, problem_detail_view,
+                    problems_view, profile_view, register_view)
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-
-    path('api/auth/', include('apps.accounts.urls')),
-    path('api/problems/', include('apps.problems.urls')),
-    path('api/submissions/', include('apps.submissions.urls')),
-    path('api/leaderboard/', include('apps.leaderboard.urls')),
-
-    path('', home_view, name='home'),
-    path('register/', register_view, name='register-page'),
-    path('problems/', problems_view, name='problems-page'),
-    path('problems/<slug:slug>/', problem_detail_view, name='problem-detail-page'),
-    path('leaderboard/', leaderboard_view, name='leaderboard-page'),
-    path('profile/', profile_view, name='profile-page'),
+    path("admin/", admin.site.urls),
+    path("api/auth/", include("apps.accounts.urls")),
+    path("api/problems/", include("apps.problems.urls")),
+    path("api/submissions/", include("apps.submissions.urls")),
+    path("api/leaderboard/", include("apps.leaderboard.urls")),
+    path("", home_view, name="home"),
+    path("register/", register_view, name="register-page"),
+    path("problems/", problems_view, name="problems-page"),
+    path("problems/<slug:slug>/", problem_detail_view, name="problem-detail-page"),
+    path("leaderboard/", leaderboard_view, name="leaderboard-page"),
+    path("profile/", profile_view, name="profile-page"),
 ]
 
 if settings.DEBUG:

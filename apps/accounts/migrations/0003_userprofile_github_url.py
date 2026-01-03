@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0002_userprofile_submissions_counters'),
+        ("accounts", "0002_userprofile_submissions_counters"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='userprofile',
-            name='github_url',
+            model_name="userprofile",
+            name="github_url",
             field=models.URLField(blank=True, max_length=200, null=True),
         ),
     ]

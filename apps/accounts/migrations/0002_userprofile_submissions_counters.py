@@ -6,23 +6,23 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('accounts', '0001_initial'),
+        ("accounts", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='userprofile',
-            name='rank',
-            field=models.CharField(default='Bronze', max_length=50),
+            model_name="userprofile",
+            name="rank",
+            field=models.CharField(default="Bronze", max_length=50),
         ),
         migrations.AddField(
-            model_name='userprofile',
-            name='total_submissions_count',
+            model_name="userprofile",
+            name="total_submissions_count",
             field=models.IntegerField(default=0),
         ),
         migrations.AddField(
-            model_name='userprofile',
-            name='accepted_submissions_count',
+            model_name="userprofile",
+            name="accepted_submissions_count",
             field=models.IntegerField(default=0),
         ),
     ]
