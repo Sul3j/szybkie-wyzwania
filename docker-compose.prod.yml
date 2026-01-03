@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'  # obsolete, removed to avoid warnings
 
 # Production configuration for Szybkie Wyzwania
 # Works with central nginx-proxy for SSL and routing
@@ -38,7 +38,7 @@ services:
       retries: 5
 
   web:
-    build: .
+    image: ghcr.io/sul3j/szybkie-wyzwania:latest
     container_name: wyzwania-web
     restart: always
     command: >
@@ -74,7 +74,7 @@ services:
       - 8000
 
   celery:
-    build: .
+    image: ghcr.io/sul3j/szybkie-wyzwania:latest
     container_name: wyzwania-celery
     restart: always
     command: celery -A szybkie_wyzwania_project worker -l info --concurrency=2
@@ -96,7 +96,7 @@ services:
       - wyzwania-internal
 
   celery-beat:
-    build: .
+    image: ghcr.io/sul3j/szybkie-wyzwania:latest
     container_name: wyzwania-beat
     restart: always
     command: celery -A szybkie_wyzwania_project beat -l info

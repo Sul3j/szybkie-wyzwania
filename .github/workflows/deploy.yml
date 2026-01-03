@@ -93,11 +93,14 @@ jobs:
         script: |
           cd /opt/szybkie-wyzwania
 
+          # Fix git ownership issue
+          git config --global --add safe.directory /opt/szybkie-wyzwania
+
           # Pull latest code (for docker-compose.prod.yml updates)
           git pull origin main
 
-          # Create .env file from secrets
-          cat > .env << EOF
+          # Create .env file from secrets (with sudo to fix permission issues)
+          sudo tee .env > /dev/null << EOF
           GITHUB_USERNAME=${{ github.repository_owner }}
           SECRET_KEY='${{ secrets.SECRET_KEY }}'
           ALLOWED_HOSTS='${{ secrets.ALLOWED_HOSTS }}'
@@ -120,10 +123,6 @@ jobs:
 
           # Show running containers
           docker compose -f docker-compose.prod.yml ps
-
-          # Restart nginx-proxy to pick up changes (if needed)
-          cd /opt/vps
-          docker compose -f docker-compose.nginx-proxy.yml restart nginx-proxy
 
     - name: Deployment status
       if: success()
