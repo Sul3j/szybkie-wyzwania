@@ -27,7 +27,7 @@ class TestUserProfileModel:
         assert isinstance(user.profile, UserProfile)
         assert user.profile.experience_points == 0
         assert user.profile.level == 1
-        assert user.profile.rank == "Bronze"
+        assert user.profile.rank == "Code Rookie"
 
     def test_add_experience_levels_up(self, user):
         """Test adding experience updates level correctly."""
@@ -47,23 +47,23 @@ class TestUserProfileModel:
         """Test that rank updates with level progression."""
         profile = user.profile
 
-        # Start at Bronze (level 1)
-        assert profile.rank == "Bronze"
+        # Start at Code Rookie (level 1)
+        assert profile.rank == "Code Rookie"
 
-        # Level up to 5 (Silver rank - 1000 XP)
+        # Level up to 5 (Code Ninja rank - 1000 XP)
         profile.add_experience(1000)
         assert profile.level == 5
-        assert profile.rank == "Silver"
+        assert profile.rank == "Code Ninja"
 
-        # Level up to Gold rank (5000 XP)
+        # Level up to Tech Mastermind rank (5000 XP)
         profile.add_experience(4000)
         assert profile.experience_points == 5000
-        assert profile.rank == "Gold"
+        assert profile.rank == "Tech Mastermind"
 
-        # Level up to Platinum rank (10000 XP)
+        # Level up to Code Legend rank (10000 XP)
         profile.add_experience(5000)
         assert profile.experience_points == 10000
-        assert profile.rank == "Platinum"
+        assert profile.rank == "Code Legend"
 
     def test_increment_submissions(self, user):
         """Test incrementing submission counters."""
@@ -302,20 +302,20 @@ class TestXPLevelSystem:
         """Test rank changes with levels."""
         profile = user.profile
 
-        # Bronze (0 XP)
-        assert profile.rank == "Bronze"
+        # Code Rookie (0 XP)
+        assert profile.rank == "Code Rookie"
 
-        # Silver (1000 XP)
+        # Code Ninja (1000 XP)
         profile.add_experience(1000)
-        assert profile.rank == "Silver"
+        assert profile.rank == "Code Ninja"
 
-        # Gold (5000 XP)
+        # Tech Mastermind (5000 XP)
         profile.add_experience(4000)
-        assert profile.rank == "Gold"
+        assert profile.rank == "Tech Mastermind"
 
-        # Platinum (10000 XP)
+        # Code Legend (10000 XP)
         profile.add_experience(5000)
-        assert profile.rank == "Platinum"
+        assert profile.rank == "Code Legend"
 
     def test_xp_never_decreases(self, user):
         """Test that XP never decreases."""

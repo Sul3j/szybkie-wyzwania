@@ -11,7 +11,7 @@ class UserProfile(models.Model):
 
     experience_points = models.IntegerField(default=0)
     level = models.IntegerField(default=1)
-    rank = models.CharField(max_length=50, default="Bronze")
+    rank = models.CharField(max_length=50, default="Code Rookie")
 
     # Submission counters (cached for performance)
     total_submissions_count = models.IntegerField(default=0)
