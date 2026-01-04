@@ -6,8 +6,10 @@ from rest_framework.views import APIView
 from apps.judge.tasks import evaluate_submission
 
 from .models import Submission
-from .serializers import (SubmissionCreateSerializer,
+from .serializers import (PublicSolutionSerializer,
+                          SubmissionCreateSerializer,
                           SubmissionDetailSerializer, SubmissionListSerializer,
+                          SubmissionPublishSerializer,
                           SubmissionStatsSerializer)
 
 
@@ -147,3 +149,47 @@ class ProblemSubmissionsView(generics.ListAPIView):
             .select_related("problem", "user")
             .order_by("execution_time")
         )
+
+
+class PublicSolutionsView(generics.ListAPIView):
+    """
+    List top 10 fastest public solutions for a specific problem.
+    Accessible to all users (even unauthenticated).
+    """
+
+    serializer_class = PublicSolutionSerializer
+    permission_classes = [permissions.AllowAny]
+
+    def get_queryset(self):
+        problem_slug = self.kwargs.get("problem_slug")
+
+        return (
+            Submission.objects.filter(
+                problem__slug=problem_slug, status="accepted", is_public=True
+            )
+            .select_related("problem", "user")
+            .order_by("execution_time", "-published_at")[:10]
+        )
+
+
+class SubmissionPublishView(generics.UpdateAPIView):
+    """
+    Publish or unpublish a user's submission.
+    Only the owner can publish/unpublish their submission.
+    """
+
+    serializer_class = SubmissionPublishSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Submission.objects.filter(user=self.request.user)
+
+    def perform_update(self, serializer):
+        submission = serializer.instance
+
+        if submission.user != self.request.user:
+            from rest_framework.exceptions import PermissionDenied
+
+            raise PermissionDenied("You can only publish your own submissions")
+
+        serializer.save()

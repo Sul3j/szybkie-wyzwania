@@ -720,6 +720,9 @@ function initProblemDetailPage() {
             setTimeout(initMonaco, 500);
         }
     }
+
+    // Load public solutions on page load
+    loadPublicSolutions();
 }
 
 function setupEditorEventListeners() {
@@ -1068,7 +1071,16 @@ function showResults(result, submissionType = 'submit') {
                         ${result.points_awarded ? `<div class="points-awarded">Zdobyte punkty: <strong>${result.points_awarded}</strong></div>` : ''}
                     </div>
                 </div>
+                <div class="share-solution-prompt">
+                    <button class="btn btn-outline btn-share" onclick="showPublishModal(${result.id})">
+                        <i class="fas fa-share-alt"></i> Udostępnij swoje rozwiązanie
+                    </button>
+                    <p class="share-hint">Podziel się swoim kodem z innymi użytkownikami!</p>
+                </div>
             `;
+
+            // Load public solutions after showing success
+            loadPublicSolutions();
         } else {
             html += `
                 <div class="success-message run-success">
@@ -1909,4 +1921,230 @@ function debounce(func, wait) {
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
+}
+
+// === PUBLIC SOLUTIONS FUNCTIONALITY ===
+
+async function loadPublicSolutions() {
+    if (!window.PROBLEM_SLUG) return;
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/submissions/problem/${window.PROBLEM_SLUG}/public/`
+        );
+
+        if (!response.ok) {
+            console.error('Failed to load public solutions');
+            return;
+        }
+
+        const solutions = await response.json();
+        displayPublicSolutions(solutions);
+    } catch (error) {
+        console.error('Error loading public solutions:', error);
+    }
+}
+
+function displayPublicSolutions(solutions) {
+    const sectionDiv = document.getElementById('publicSolutionsSection');
+    const contentDiv = document.getElementById('publicSolutionsContent');
+
+    if (!sectionDiv || !contentDiv) return;
+
+    if (!solutions || solutions.length === 0) {
+        sectionDiv.style.display = 'none';
+        return;
+    }
+
+    sectionDiv.style.display = 'block';
+
+    let html = '<div class="solutions-list">';
+
+    solutions.forEach((solution, index) => {
+        const rank = index + 1;
+        const medal = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : `#${rank}`;
+
+        html += `
+            <div class="solution-card" data-solution-id="${solution.id}">
+                <div class="solution-header">
+                    <div class="solution-rank">${medal}</div>
+                    <div class="solution-meta">
+                        <div class="solution-author">
+                            <i class="fas fa-user"></i> ${solution.username}
+                        </div>
+                        <div class="solution-stats">
+                            <span class="stat-badge">
+                                <i class="fas fa-clock"></i> ${solution.execution_time}ms
+                            </span>
+                            <span class="stat-badge">
+                                <i class="fas fa-memory"></i> ${solution.memory_used || 'N/A'} MB
+                            </span>
+                            <span class="stat-badge language-badge">
+                                ${solution.language}
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btn-toggle-code" onclick="toggleSolutionCode(${solution.id})">
+                        <i class="fas fa-code"></i> Pokaż kod
+                    </button>
+                </div>
+                ${solution.solution_description ? `
+                    <div class="solution-description">
+                        <strong>Opis rozwiązania:</strong>
+                        <p>${escapeHtml(solution.solution_description)}</p>
+                    </div>
+                ` : ''}
+                <div class="solution-code" id="solution-code-${solution.id}" style="display: none;">
+                    <pre><code class="language-${solution.language}">${escapeHtml(solution.code)}</code></pre>
+                </div>
+            </div>
+        `;
+    });
+
+    html += '</div>';
+    contentDiv.innerHTML = html;
+}
+
+function toggleSolutionCode(solutionId) {
+    const codeDiv = document.getElementById(`solution-code-${solutionId}`);
+    const button = event.target.closest('.btn-toggle-code');
+
+    if (!codeDiv || !button) return;
+
+    if (codeDiv.style.display === 'none') {
+        codeDiv.style.display = 'block';
+        button.innerHTML = '<i class="fas fa-eye-slash"></i> Ukryj kod';
+    } else {
+        codeDiv.style.display = 'none';
+        button.innerHTML = '<i class="fas fa-code"></i> Pokaż kod';
+    }
+}
+
+function showPublishModal(submissionId) {
+    const modal = document.createElement('div');
+    modal.className = 'modal-overlay';
+    modal.id = 'publishModal';
+
+    modal.innerHTML = `
+        <div class="modal-content publish-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-share-alt"></i> Udostępnij swoje rozwiązanie</h3>
+                <button class="modal-close" onclick="closePublishModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-description">
+                    Udostępnij swoje rozwiązanie innym użytkownikom! Twój kod będzie widoczny
+                    w sekcji "Najszybsze publiczne rozwiązania".
+                </p>
+                <div class="form-group">
+                    <label for="solutionDescription">
+                        Opis rozwiązania (opcjonalny)
+                    </label>
+                    <textarea
+                        id="solutionDescription"
+                        class="form-control"
+                        rows="4"
+                        maxlength="2000"
+                        placeholder="Opisz swoje podejście, użyte algorytmy, pomysły..."
+                    ></textarea>
+                    <small class="form-hint">Możesz wyjaśnić swoje podejście do rozwiązania problemu</small>
+                </div>
+                <div class="form-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="confirmPublish">
+                        <span>Rozumiem, że mój kod będzie publiczny i widoczny dla wszystkich użytkowników</span>
+                    </label>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closePublishModal()">
+                    Anuluj
+                </button>
+                <button class="btn btn-primary" onclick="publishSolution(${submissionId})">
+                    <i class="fas fa-share-alt"></i> Udostępnij
+                </button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(modal);
+
+    setTimeout(() => modal.classList.add('active'), 10);
+}
+
+function closePublishModal() {
+    const modal = document.getElementById('publishModal');
+    if (modal) {
+        modal.classList.remove('active');
+        setTimeout(() => modal.remove(), 300);
+    }
+}
+
+async function publishSolution(submissionId) {
+    const confirmCheckbox = document.getElementById('confirmPublish');
+    const descriptionTextarea = document.getElementById('solutionDescription');
+
+    if (!confirmCheckbox.checked) {
+        alert('Proszę potwierdzić, że rozumiesz że kod będzie publiczny');
+        return;
+    }
+
+    const description = descriptionTextarea.value.trim();
+
+    try {
+        const response = await fetch(
+            `${API_BASE_URL}/submissions/${submissionId}/publish/`,
+            {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${authToken}`
+                },
+                body: JSON.stringify({
+                    is_public: true,
+                    solution_description: description
+                })
+            }
+        );
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.detail || 'Błąd podczas publikacji');
+        }
+
+        closePublishModal();
+
+        showNotification('Rozwiązanie zostało udostępnione!', 'success');
+
+        loadPublicSolutions();
+
+    } catch (error) {
+        console.error('Error publishing solution:', error);
+        alert('Błąd podczas publikacji rozwiązania: ' + error.message);
+    }
+}
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        <span>${message}</span>
+    `;
+
+    document.body.appendChild(notification);
+
+    setTimeout(() => notification.classList.add('show'), 10);
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
 }

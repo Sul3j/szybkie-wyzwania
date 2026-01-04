@@ -1,8 +1,9 @@
 from django.urls import path
 
 from .views import (AllSubmissionsView, ProblemSubmissionsView,
-                    RecentSubmissionsView, SubmissionCreateView,
-                    SubmissionDetailView, SubmissionListView,
+                    PublicSolutionsView, RecentSubmissionsView,
+                    SubmissionCreateView, SubmissionDetailView,
+                    SubmissionListView, SubmissionPublishView,
                     UserSubmissionStatsView)
 
 urlpatterns = [
@@ -18,6 +19,18 @@ urlpatterns = [
         "problem/<slug:problem_slug>/",
         ProblemSubmissionsView.as_view(),
         name="problem-submissions",
+    ),
+    # Public solutions
+    path(
+        "problem/<slug:problem_slug>/public/",
+        PublicSolutionsView.as_view(),
+        name="public-solutions",
+    ),
+    # Publish/unpublish submission
+    path(
+        "<int:pk>/publish/",
+        SubmissionPublishView.as_view(),
+        name="submission-publish",
     ),
     # Statistics
     path("stats/", UserSubmissionStatsView.as_view(), name="user-submission-stats"),

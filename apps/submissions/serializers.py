@@ -119,3 +119,67 @@ class SubmissionStatsSerializer(serializers.Serializer):
     acceptance_rate = serializers.FloatField()
     status_distribution = serializers.DictField()
     language_distribution = serializers.DictField()
+
+
+class PublicSolutionSerializer(serializers.ModelSerializer):
+    """Serializer for publicly shared solutions - includes code."""
+
+    username = serializers.CharField(source="user.username", read_only=True)
+    problem_title = serializers.CharField(source="problem.title", read_only=True)
+    problem_slug = serializers.CharField(source="problem.slug", read_only=True)
+
+    class Meta:
+        model = Submission
+        fields = [
+            "id",
+            "username",
+            "problem_title",
+            "problem_slug",
+            "code",
+            "language",
+            "execution_time",
+            "memory_used",
+            "solution_description",
+            "published_at",
+            "submitted_at",
+        ]
+        read_only_fields = fields
+
+
+class SubmissionPublishSerializer(serializers.ModelSerializer):
+    """Serializer for publishing/unpublishing submissions."""
+
+    solution_description = serializers.CharField(
+        required=False,
+        allow_blank=True,
+        max_length=2000,
+        help_text="Optional description of your solution approach",
+    )
+
+    class Meta:
+        model = Submission
+        fields = ["is_public", "solution_description"]
+
+    def validate(self, attrs):
+        submission = self.instance
+
+        if attrs.get("is_public", False) and not submission.is_accepted:
+            raise serializers.ValidationError(
+                "Only accepted submissions can be published"
+            )
+
+        return attrs
+
+    def update(self, instance, validated_data):
+        is_public = validated_data.get("is_public", instance.is_public)
+        description = validated_data.get("solution_description", "")
+
+        if is_public and not instance.is_public:
+            instance.publish_solution(description)
+        elif is_public and instance.is_public:
+            instance.solution_description = description
+            instance.save(update_fields=["solution_description"])
+        elif not is_public:
+            instance.unpublish_solution()
+
+        return instance

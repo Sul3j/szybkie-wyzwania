@@ -56,6 +56,16 @@ class Submission(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
     evaluated_at = models.DateTimeField(null=True, blank=True)
 
+    is_public = models.BooleanField(
+        default=False, help_text="Whether this solution is publicly shared"
+    )
+    solution_description = models.TextField(
+        blank=True, null=True, help_text="Optional description/comment about the solution approach"
+    )
+    published_at = models.DateTimeField(
+        null=True, blank=True, help_text="When the solution was made public"
+    )
+
     class Meta:
         ordering = ["-submitted_at"]
         verbose_name = "Submission"
@@ -64,6 +74,8 @@ class Submission(models.Model):
             models.Index(fields=["user", "problem"]),
             models.Index(fields=["status"]),
             models.Index(fields=["submitted_at"]),
+            models.Index(fields=["problem", "is_public", "execution_time"]),
+            models.Index(fields=["is_public", "-published_at"]),
         ]
 
     def __str__(self):
@@ -106,3 +118,21 @@ class Submission(models.Model):
                     self.user.profile.add_experience(self.points_awarded)
 
                 self.save(update_fields=["points_awarded"])
+
+    def publish_solution(self, description=""):
+        """Make this solution public with optional description."""
+        from django.utils import timezone
+
+        if not self.is_accepted:
+            raise ValueError("Only accepted submissions can be published")
+
+        self.is_public = True
+        self.solution_description = description
+        self.published_at = timezone.now()
+        self.save(update_fields=["is_public", "solution_description", "published_at"])
+
+    def unpublish_solution(self):
+        """Remove this solution from public view."""
+        self.is_public = False
+        self.published_at = None
+        self.save(update_fields=["is_public", "published_at"])
